@@ -29,5 +29,8 @@ class IPFS:
 
 
 ipfs = IPFS()
-res = ipfs.upload('./test')
+res = ipfs.upload('../test/test1')
 print(res)
+file = ipfs.retrieve(res['Hash'])
+file = str(file, 'utf-8')
+print(file)
