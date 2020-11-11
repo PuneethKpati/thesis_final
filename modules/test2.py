@@ -1,3 +1,3 @@
 from resource_manager import ResourceManager
 
-r = ResourceManager(90, 90)
+r = ResourceManager(90, 90, 'B')

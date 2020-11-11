@@ -10,9 +10,10 @@ from fileStorage import FileStorage
 
 class ResourceManager:
 
-	def __init__(self, cpu, mem):
+	def __init__(self, cpu, mem, prof):
 		self.cpu_roof = cpu
 		self.mem_roof = mem
+		self.prof = prof
 		self.newFileHash = ''
 		self.helpAsked = False
 		# for now lets use the development server on ganache
@@ -45,12 +46,12 @@ class ResourceManager:
 
     # Broadcasts a message to network for hhelp 
 	def askHelp(self):
-		self.web3.geth.shh.post({'payload': self.web3.toHex(text="HELP\r\n"+ self.newFileHash), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2})
+		self.web3.geth.shh.post({'payload': self.web3.toHex(text="HELP\r\n"+ self.newFileHash+'\r\n'+self.prof), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2})
 		self.helpAsked = True
 
 	# If a profile has been processed, broadcasts the message a FIN signal
 	def sendHelp(self, fileHash):
-		self.web3.geth.shh.post({'payload': self.web3.toHex(text="FIN\r\n"+ fileHash), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2})
+		self.web3.geth.shh.post({'payload': self.web3.toHex(text="FIN\r\n"+ fileHash+'\r\n'+self.prof), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2})
 		
 
 	# watches the network for broadcast messages on the topic filter
@@ -64,8 +65,8 @@ class ResourceManager:
 			for message in messages:
 				content = message['payload']
 				contentS = bytes.fromhex(content.hex()[2:]).decode('utf-8')
-				Header, fileHash = contentS.split('\r\n')
-				print(Header, fileHash, '\n\n\n\n\n')
+				Header, fileHash, prof = contentS.split('\r\n')
+				print(Header, fileHash, prof, '\n\n\n')
 				# If help is needed and device has enough resources - sendHelp
 				if Header == 'HELP':
 					if not self.busy():
