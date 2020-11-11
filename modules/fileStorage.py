@@ -35,6 +35,7 @@ class FileStorage:
 		print('Retrieving File From IPFS Network Through Hash ...')
 		# retrieve file content through class's internal function
 		fileContents = self.retrieve_from_hash(fileHash)
+		print(fileContents)
 		return fileContents
 
 	# Retrieving file from the file hash 

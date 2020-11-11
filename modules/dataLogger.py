@@ -4,6 +4,7 @@ import datetime
 import time
 from datetime import datetime, timedelta
 import psutil 
+import sys
 
 class DataLogger:
 	def __init__(self, pids):
@@ -65,6 +66,12 @@ class DataLogger:
 		# close workbook and save the file
 		workbook.close()
 
+numElem = input('Enter number of pids: ')
+pids = []
+for i in range(int(numElem)):
+	pid = int(input('Enter Process ID (pid) : '))
+	pids.append(pid)
 
-g = DataLogger([713, 974])
-g.log(10)
+g = DataLogger(pids)
+period = input('Enter period for logging (seconds) : ')
+g.log(int(period))
