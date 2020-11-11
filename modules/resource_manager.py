@@ -58,7 +58,7 @@ class ResourceManager:
 		while True:
 			# get current messages
 			messages = self.web3.geth.shh.get_filter_messages(self.filter_id)
-			print(messages)
+			print('polling...')
 
 			# go through all messages active right now
 			for message in messages:
@@ -105,6 +105,4 @@ class ResourceManager:
 		self.newFileHash = newFile
 
 
-r = ResourceManager(10, 10)
-time.sleep(3)
-r.addNewFile('haha')
+
