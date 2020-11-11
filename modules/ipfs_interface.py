@@ -13,7 +13,6 @@ class IPFS:
 		except urllib3.exceptions.NewConnectionError:
 			raise Exception('Is the local IPFS Daemon running?')
 
-		print(result)
 		return result
 
 	# Retrieve file from IPFS network through hash

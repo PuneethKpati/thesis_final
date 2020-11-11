@@ -32,7 +32,6 @@ class Contract:
 		# Else get an instance of the contract to begin storing and retrieving hashes
 		else:
 			self.ipfsHashes = self.web3.eth.contract(address=self.contract_address, abi=self.contract_abi)
-			print(self.ipfsHashes)
 
 	# Adds the ipfs hash of a given file into the smart contract mapping
 	def addFile(self, fileId, ipfsHash):

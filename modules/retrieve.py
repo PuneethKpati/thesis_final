@@ -8,5 +8,3 @@ while True:
 	info = fileStorage.retrieve_from_name(fileName)
 	print(str(info, 'utf-8'))
 	
-	print('\nNot a Valid File!')
-	

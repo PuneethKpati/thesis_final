@@ -14,9 +14,11 @@ class FileStorage:
 
 	# upload the file 
 	def upload(self, fileName):
+		print('Uploading File On IPFS Network')
 		# Upload profile onto Ipfs
 		fileInfo = self.ipfs.upload(fileName)
-		print(fileInfo)
+
+		print('Uploading File Hash To IPFS contract ...')
 		# upload the ipfs hash onto ethereum smart contract
 		self.ipfsContract.addFile(fileInfo['Name'], fileInfo['Hash'])
 		# add to the list of files from current node
@@ -26,9 +28,11 @@ class FileStorage:
 
 	# Retrieving file from the FileName
 	def retrieve_from_name(self, fileName):
+		print('Retrieving Hash From IPFS contract ...')
 		# If we don't have the hash for the file then retrieve from IPFS
 		fileHash = self.ipfsContract.retrieveHash(fileName)
-		print(fileHash)
+
+		print('Retrieving File From IPFS Network Through Hash ...')
 		# retrieve file content through class's internal function
 		fileContents = self.retrieve_from_hash(fileHash)
 		return fileContents
