@@ -15,11 +15,10 @@ class Contract:
 
 		# set the default account for prototype
 		self.web3.eth.defaultAccount = self.web3.eth.accounts[0]
-		print(self.web3.eth.defaultAccount)
-		print(self.web3.eth.accounts)
 		# IF the contract file exists, retrieve smart contract details
+
 		try:
-			file = open('/home/puneeth/final_dep/final_demo_thesis/truffle/build/contracts/Ipfs.json', 'r')
+			file = open('./../truffle/build/contracts/Ipfs.json', 'r')
 			contract_json = json.load(file)
 			# Retrive the abi for the contract contents
 			self.contract_abi = contract_json['abi'] 

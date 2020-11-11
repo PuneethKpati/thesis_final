@@ -28,6 +28,7 @@ class FileStorage:
 	def retrieve_from_name(self, fileName):
 		# If we don't have the hash for the file then retrieve from IPFS
 		fileHash = self.ipfsContract.retrieveHash(fileName)
+		print(fileHash)
 		# retrieve file content through class's internal function
 		fileContents = self.retrieve_from_hash(fileHash)
 		return fileContents
@@ -35,3 +36,4 @@ class FileStorage:
 	# Retrieving file from the file hash 
 	def retrieve_from_hash(self, fileHash):
 		return self.ipfs.retrieve(fileHash)
+

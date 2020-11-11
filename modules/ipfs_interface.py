@@ -12,6 +12,8 @@ class IPFS:
 		# If the local daemon is not alive then catch the error 
 		except urllib3.exceptions.NewConnectionError:
 			raise Exception('Is the local IPFS Daemon running?')
+
+		print(result)
 		return result
 
 	# Retrieve file from IPFS network through hash
@@ -26,11 +28,3 @@ class IPFS:
 			raise Exception('Is the local IPFS Daemon running?')
 		
 		return fileContents
-
-
-ipfs = IPFS()
-res = ipfs.upload('../test/test1')
-print(res)
-file = ipfs.retrieve(res['Hash'])
-file = str(file, 'utf-8')
-print(file)
