@@ -6,12 +6,15 @@ from web3.geth import shh
 from web3 import Web3, HTTPProvider
 from web3.middleware import geth_poa_middleware
 
+from fileStorage import FileStorage
+
 class ResourceManager:
 
 	def __init__(self, cpu, mem):
 		self.cpu_roof = cpu
 		self.mem_roof = mem
-
+		self.newFileHash = ''
+		self.helpAsked = False
 		# for now lets use the development server on ganache
 		web = 'http://127.0.0.1:8545'
 		# Get the client instance to interact with our ethereum network
@@ -40,36 +43,68 @@ class ResourceManager:
 		except:
 		   print("Error: unable to start thread")
 
+    # Broadcasts a message to network for hhelp 
 	def askHelp(self):
-		self.web3.geth.shh.post({'payload': self.web3.toHex(text="HELP!"), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2})
+		self.web3.geth.shh.post({'payload': self.web3.toHex(text="HELP\r\n"+ self.newFileHash), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2})
+		self.helpAsked = True
 
-	def sendHelp(self, sender):
-		pass
+	# If a profile has been processed, broadcasts the message a FIN signal
+	def sendHelp(self, fileHash):
+		self.web3.geth.shh.post({'payload': self.web3.toHex(text="FIN\r\n"+ fileHash), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2})
+		
 
-	def sendFile(self, fileName):
-		self.web3.geth.shh.post({'payload': self.web3.toHex(text=fileName), 'symKeyID': self.sym_key_id, 'topic': '0x12340000', 'powTarget': 0, 'powTime': 2}) 
-
+	# watches the network for broadcast messages on the topic filter
 	def monitorFilter(self):
 		while True:
-			time.sleep(1)
+			# get current messages
 			messages = self.web3.geth.shh.get_filter_messages(self.filter_id)
+			print(messages)
 
-			if len(messages) > 0:
-				print(messages)
+			# go through all messages active right now
+			for message in messages:
+				content = message['payload']
+				contentS = bytes.fromhex(content.hex()[2:]).decode('utf-8')
+				Header, fileHash = contentS.split('\r\n')
+				print(Header, fileHash, '\n\n\n\n\n')
+				# If help is needed and device has enough resources - sendHelp
+				if Header == 'HELP':
+					if not self.busy():
+						self.sendHelp(fileHash)
 
+					fs = FileStorage()
+					# fs.retrieve_from_hash(fileHash)
+
+				# If our help request has been pushed by someone then release job
+				elif Header == 'FIN':
+					if self.newFileHash == fileHash:
+						self.newFileHash = ''
+						self.helpAsked = False
+
+			time.sleep(1)
+
+			
+
+	# monitor the performance for each call
 	def monitorPerformance(self):
 		while True:
-			cpuUsage = psutil.cpu_percent(interval=1)
-			memUsage = psutil.virtual_memory().percent
-
-			if cpuUsage > self.cpu_roof or memUsage > self.mem_roof:
-				print(cpu)
-				print('Need Help!')
-				self.askHelp()
+			if self.newFileHash and not self.helpAsked:
+				if self.busy():
+					self.askHelp()
 
 			time.sleep(1)
 
+	# determines whether a given node is busy or not
+	def busy(self):
+		cpuUsage = psutil.cpu_percent(interval=1)
+		memUsage = psutil.virtual_memory().percent
+		if cpuUsage > self.cpu_roof or memUsage > self.mem_roof:
+			return True
+		return False
 
-r = ResourceManager(90, 90)
-time.sleep(8)
-r.askHelp()
+	def addNewFile(self, newFile):
+		self.newFileHash = newFile
+
+
+r = ResourceManager(10, 10)
+time.sleep(3)
+r.addNewFile('haha')
