@@ -73,5 +73,5 @@ for i in range(int(numElem)):
 	pids.append(pid)
 
 g = DataLogger(pids)
-period = input('Enter period for logging (seconds) : ')
+period = input('Enter period for logging (hours) : ')
 g.log(int(period))
