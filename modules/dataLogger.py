@@ -13,8 +13,9 @@ class DataLogger:
 		for pid in pids:
 			self.processP[pid] = psutil.Process(pid)
 		
-	# logs all the data in appropriate xlsx sheets
-	def log(self, addTime):
+
+	def openNextLog(self):
+		# Read the document number for logging file
 		with open("data/num", "r+") as f:
 		    data = f.read()
 		    docNum = int(data)
@@ -33,38 +34,53 @@ class DataLogger:
 		worksheet.write('F1', 'cpuUsage')
 		worksheet.set_column('A:F', 25)
 
-		# enter data from row2
-		row = 2
+		return workbook, worksheet
+
+	# logs all the data in appropriate xlsx sheets
+	def log(self, addTime):
+
 		# log data every second for the given duration
 		finish = datetime.now() + timedelta(hours=addTime)
 		while datetime.now() < finish:
+			# interval timeSlot 
+			endLog = datetime.now() + timedelta(hours=5)
+			# If next interval is later than the finish time then end before finish
+			if endLog > finish:
+				endLog = finish
+
+			# get a new workbook and start data logging from row 2
+			workbook, worksheet = self.openNextLog()
+			row = 2
+
+			# for every 500ms in the next interval repeat the logging
+			while(datetime.now() < endLog):
 			# for each process being monitored
-			for p in self.processP:
-				# record current datetime
-				currTime = datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
+				for p in self.processP:
+					# record current datetime
+					currTime = datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
+					self.processP[p].cpu_percent(interval=1)
+					# All our metrics are calculated here
+					mem_mbs  = self.processP[p].memory_full_info().rss
+					memusage = self.processP[p].memory_percent()
+					cpuTotal = self.processP[p].cpu_percent(interval=1)
+					cpuUsage = cpuTotal / psutil.cpu_count()
 
-				# All our metrics are calculated here
-				mem_mbs  = self.processP[p].memory_full_info().rss
-				memusage = self.processP[p].memory_percent()
-				cpuTotal = self.processP[p].cpu_percent()
-				cpuUsage = cpuTotal / psutil.cpu_count()
+					# write all the current time data in the same row 
+					# in their respective columns
+					worksheet.write(row, 0, currTime)
+					worksheet.write(row, 1, p)
+					worksheet.write(row, 2, mem_mbs)
+					worksheet.write(row, 3, memusage)
+					worksheet.write(row, 4, cpuTotal)
+					worksheet.write(row, 5, cpuUsage)
 
-				# write all the current time data in the same row 
-				# in their respective columns
-				worksheet.write(row, 0, currTime)
-				worksheet.write(row, 1, p)
-				worksheet.write(row, 2, mem_mbs)
-				worksheet.write(row, 3, memusage)
-				worksheet.write(row, 4, cpuTotal)
-				worksheet.write(row, 5, cpuUsage)
+					print('Entered data: ', currTime, p, memusage, mem_mbs, cpuTotal, cpuUsage)
+					row += 1
 
-				print('Entered data: ', currTime, p, memusage, mem_mbs, cpuTotal, cpuUsage)
-				row += 1
-
-			# duration between each entry in seconds
-			time.sleep(0.5)
-		# close workbook and save the file
-		workbook.close()
+				# duration between each entry in seconds
+				# time.sleep(0.5)
+			# close workbook and save the file
+			workbook.close()
 
 numElem = input('Enter number of pids: ')
 pids = []
