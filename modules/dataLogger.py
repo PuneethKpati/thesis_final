@@ -36,7 +36,7 @@ class DataLogger:
 		# enter data from row2
 		row = 2
 		# log data every second for the given duration
-		finish = datetime.now() + timedelta(seconds=addTime)
+		finish = datetime.now() + timedelta(hours=addTime)
 		while datetime.now() < finish:
 			# for each process being monitored
 			for p in self.processP:
