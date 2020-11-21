@@ -28,11 +28,12 @@ class DataLogger:
 		worksheet = workbook.add_worksheet()
 		worksheet.write('A1', 'Time')
 		worksheet.write('B1', 'pid')
-		worksheet.write('C1', 'memory (Mb)')
-		worksheet.write('D1', 'memusage')
-		worksheet.write('E1', 'cpuTotal')
-		worksheet.write('F1', 'cpuUsage')
-		worksheet.set_column('A:F', 25)
+		worksheet.write('C1', 'pName')
+		worksheet.write('D1', 'memory (Mb)')
+		worksheet.write('E1', 'memusage')
+		worksheet.write('F1', 'cpuTotal')
+		worksheet.write('G1', 'cpuUsage')
+		worksheet.set_column('A:G', 25)
 
 		return workbook, worksheet
 
@@ -40,10 +41,10 @@ class DataLogger:
 	def log(self, addTime):
 
 		# log data every second for the given duration
-		finish = datetime.now() + timedelta(hours=addTime)
+		finish = datetime.now() + timedelta(seconds=addTime)
 		while datetime.now() < finish:
 			# interval timeSlot 
-			endLog = datetime.now() + timedelta(hours=5)
+			endLog = datetime.now() + timedelta(seconds=5)
 			# If next interval is later than the finish time then end before finish
 			if endLog > finish:
 				endLog = finish
@@ -64,17 +65,18 @@ class DataLogger:
 					memusage = self.processP[p].memory_percent()
 					cpuTotal = self.processP[p].cpu_percent(interval=1)
 					cpuUsage = cpuTotal / psutil.cpu_count()
-
+					pName = self.processP[p].name()
 					# write all the current time data in the same row 
 					# in their respective columns
 					worksheet.write(row, 0, currTime)
 					worksheet.write(row, 1, p)
-					worksheet.write(row, 2, mem_mbs)
-					worksheet.write(row, 3, memusage)
-					worksheet.write(row, 4, cpuTotal)
-					worksheet.write(row, 5, cpuUsage)
+					worksheet.write(row, 2, pName)
+					worksheet.write(row, 3, mem_mbs)
+					worksheet.write(row, 4, memusage)
+					worksheet.write(row, 5, cpuTotal)
+					worksheet.write(row, 6, cpuUsage)
 
-					print('Entered data: ', currTime, p, memusage, mem_mbs, cpuTotal, cpuUsage)
+					print('Entered data: ', pName, currTime, p, memusage, mem_mbs, cpuTotal, cpuUsage)
 					row += 1
 
 				# duration between each entry in seconds
