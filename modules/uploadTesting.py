@@ -27,7 +27,7 @@ for file in fileNames:
 	print(diffTime)
 
 	worksheet.write(row, 0, file)
-	worksheet.write(row, 1, '')
+	worksheet.write(row, 1, info['Size'])
 	worksheet.write(row, 2, diffTime)
 	worksheet.write(row, 3, start.strftime("%d/%m/%Y - %H:%M:%S"))
 
