@@ -6,7 +6,8 @@ import xlsxwriter
 
 fileStorage = FileStorage()
 testingFiles = '../testingFiles/'
-fileNames = os.listdir(testingFiles)
+fileNames = sorted(os.listdir(testingFiles))
+print(fileNames)
 
 workbook = xlsxwriter.Workbook('./data/upload.xlsx')
 worksheet = workbook.add_worksheet()
