@@ -41,10 +41,10 @@ class DataLogger:
 	def log(self, addTime):
 
 		# log data every second for the given duration
-		finish = datetime.now() + timedelta(hours=addTime)
+		finish = datetime.now() + timedelta(minutes=addTime)
 		while datetime.now() < finish:
 			# interval timeSlot 
-			endLog = datetime.now() + timedelta(hours=5)
+			endLog = datetime.now() + timedelta(hours=1)
 			# If next interval is later than the finish time then end before finish
 			if endLog > finish:
 				endLog = finish
@@ -91,5 +91,5 @@ for i in range(int(numElem)):
 	pids.append(pid)
 
 g = DataLogger(pids)
-period = input('Enter period for logging (hours) : ')
+period = input('Enter period for logging (minutes) : ')
 g.log(int(period))

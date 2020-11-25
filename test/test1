@@ -1,5 +1,0 @@
-root         1  0.0  0.0   8892   296 ?        Ssl  12:35   0:00 /init
-root         5  0.0  0.0   8896   212 tty1     Ss   12:35   0:00 /init
-user      	 6  0.0  0.0  16912  3560 tty1     S    12:35   0:00 -bash
-user        158 0.1  1.3 653148 10987 tty1     Tl   12:38   0:01 /usr/bin/truffle
-user    	202 0.0  0.0  17380  1912 tty1     R    12:51   0:00 ps aux
