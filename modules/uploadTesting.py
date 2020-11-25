@@ -21,8 +21,7 @@ for file in fileNames:
 	filePath = testingFiles+file
 
 	start = datetime.now()
-	# info = fileStorage.upload(filePath)
-	time.sleep(0.001)
+	info = fileStorage.upload(filePath)
 	diff = datetime.now() - start
 	diffTime = diff.seconds+diff.microseconds/1000000
 	print(diffTime)
